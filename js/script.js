@@ -242,11 +242,11 @@ window.addEventListener('DOMContentLoaded', ()=>{
                 margin: 0 auto;
             `;
             form.insertAdjacentElement('afterend',statusMessage);
-            const request = new XMLHttpRequest();
-            request.open('POST','server.php');
-            //if we use FormData we dont need to set requestheader
-            // request.setRequestHeader('Content-type','multipart/form-data');
-            request.setRequestHeader('Content-type','application/json; charset=utf-8');
+            // -----------XMLHttpRequest--------------------
+            // const request = new XMLHttpRequest();
+            // request.open('POST','server.php');
+
+            //request.setRequestHeader('Content-type','application/json; charset=utf-8');
             const formData = new FormData(form);
 
             const object = {};
@@ -254,21 +254,39 @@ window.addEventListener('DOMContentLoaded', ()=>{
                 object[key]=value;
             });
 
-            const json = JSON.stringify(object);
+            //const json = JSON.stringify(object);
 
-            request.send(json);
+            //request.send(json);
 
-            request.addEventListener('load',()=>{
-                if(request.status === 200){
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-
-                } else {
-                    showThanksModal(message.failure);
-                }
+            // -----------Using fetch and Promises-----------
+            fetch('server.php',{
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(object)
+            }).then(data => data.text())
+              .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(message.failure); // will throw an error if no internet, 4xx error usually wont throw errors with fetch
+            }).finally(()=>{
+                form.reset();
             });
+
+            // request.addEventListener('load',()=>{
+            //     if(request.status === 200){
+            //         console.log(request.response);
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //         statusMessage.remove();
+
+            //     } else {
+            //         showThanksModal(message.failure);
+            //     }
+            // });
         });
     }
 
@@ -295,6 +313,23 @@ window.addEventListener('DOMContentLoaded', ()=>{
             closeModal();
         },4000);
     }
+    // // TO Post something to server using fetch and promises
+    // fetch('https://jsonplaceholder.typicode.com/posts', { //add settings as an Object
+    //     method: 'POST',
+    //     body: JSON.stringify({name:'Nick'}), // will return 101 as ID because there are 100 other posts in API were fetched
+    //     headers: {
+    //         'Content-type': 'application/json'
+    //     }
+    // }) // will return promise this is why we can use .then chain
+    //     .then(response => response.json()) // response.json() will return promise as well
+    //     .then(json => console.log(json));
 });
+
+
+//API is Application Program Interface
+// Common API is DOM API e.g: document has querySelector() is built-in in browsers
+// Google Maps API
+
+// fetch API is one of them
 
 
