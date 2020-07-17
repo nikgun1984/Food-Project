@@ -187,37 +187,49 @@ window.addEventListener('DOMContentLoaded', ()=>{
     //     '.menu .container',
     //     'menu__item'
     // ).render();
+    const getResources = async (url) => {
+        const res = await fetch(url);
+        if(!res.ok){
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+        return await res.json();
+    };
+// Using classes
+    // getResources('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.forEach(({img,alt,title,descr,price})=>{ // destructure the object this way
+    //             new Menu(img,alt,title,descr,price, '.menu .container').render();
+    //         })
+    //     });
 
-    new Menu(
-        'img/tabs/fitness.jpg',
-        'fitness',
-        'Fitness Menu',
-        'The Fitness menu is a new approach to cooking: more fresh vegetables and fruits. Product of active and healthy people. This is a brand new product with the best price and high quality!',
-        7,
-        '.menu .container',
-        'menu__item'
-    ).render();
+    // getResources('http://localhost:3000/menu')
+    //     .then(data =>createCard(data));
+    
+    //difference between fetch and axios, axios will return more detail object
+    axios.get('http://localhost:3000/menu')
+        .then(elem=> {
+            elem.data.forEach(({img,alt,title,descr,price})=>{ //(data is the response that was provided by the server data: {})
+            new Menu(img,alt,title,descr,price, '.menu .container').render();
+        });
+    });
 
-    new Menu(
-        "img/tabs/lean.jpg",
-        'lean',
-        'Lean Menu',
-        'The Lean menu is a careful selection of ingredients: the complete absence of animal products, almond,oat, coconut or buckwheat milk, the right amount of protein due to tofu and imported vegetarian steaks.',
-        10,
-        '.menu .container',
-        'menu__item'
-    ).render();
-
-    new Menu(
-        "img/tabs/keto.jpg",
-        'keto',
-        'Keto Menu',
-        'Our ketogenic diet, meals and snacks are centered around the following foods: eggs, poultry, fish, meat, nuts, healthy fats, avocados, non-starchy vegetables, condiments',
-        12,
-        '.menu .container',
-        'menu__item'
-    ).render();
-
+    function createCard(data){
+        data.forEach(({img,alt,title,descr,price})=>{
+            const element = document.createElement('div');
+            element.classList.add('menu__item');
+            element.innerHTML = `
+                <img src = ${img} alt = ${alt}>
+                    <h3 class = "menu__item-subtitle">${title}</h3> 
+                    <div class = "menu__item-descr">${descr}</div> 
+                    <div class = "menu__item-divider"></div> 
+                    <div class = "menu__item-price">
+                    <div class = "menu__item-cost">Price</div> 
+                    <div class = "menu__item-total"><span>${price*71}</span> rubles/day </div> 
+                </div> 
+            `;
+            document.querySelector('.menu .container').append(element);
+        })
+    }
     //Forms
 
     const forms = document.querySelectorAll('form');
@@ -228,10 +240,22 @@ window.addEventListener('DOMContentLoaded', ()=>{
     }
 
     forms.forEach((item)=>{
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e)=>{
             e.preventDefault();
 
@@ -249,32 +273,36 @@ window.addEventListener('DOMContentLoaded', ()=>{
             //request.setRequestHeader('Content-type','application/json; charset=utf-8');
             const formData = new FormData(form);
 
-            const object = {};
-            formData.forEach(function(value,key){
-                object[key]=value;
-            });
+            // const object = {};
+            // formData.forEach(function(value,key){
+            //     object[key]=value;
+            // });
+            //        (transform Object to JSON(transform matrix to object (create matrix of [key,val] arrays)))
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             //const json = JSON.stringify(object);
 
             //request.send(json);
 
             // -----------Using fetch and Promises-----------
-            fetch('server.php',{
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
-              .then(data => {
+            // fetch('server.php',{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-type': 'application/json'
+            //     },
+            //     body: JSON.stringify(object)
+            // })
+            postData('http://localhost:3000/requests',json) //copy url from json-server terminal
+            // .then(data => data.text())
+                .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
-                statusMessage.remove();
-            }).catch(() => {
-                showThanksModal(message.failure); // will throw an error if no internet, 4xx error usually wont throw errors with fetch
-            }).finally(()=>{
+                statusMessage.remove();})
+                .catch(() => {
+                showThanksModal(message.failure);}) // will throw an error if no internet, 4xx error usually wont throw errors with fetch
+                .finally(()=>{
                 form.reset();
-            });
+                });
 
             // request.addEventListener('load',()=>{
             //     if(request.status === 200){
@@ -313,6 +341,10 @@ window.addEventListener('DOMContentLoaded', ()=>{
             closeModal();
         },4000);
     }
+
+    fetch('http://localhost:3000/menu') // url is from json-server resources in terminal
+    .then(data => data.json())
+    .then(res => console.log(res));
     // // TO Post something to server using fetch and promises
     // fetch('https://jsonplaceholder.typicode.com/posts', { //add settings as an Object
     //     method: 'POST',

@@ -1,0 +1,22 @@
+{
+  "name": "food_project",
+  "version": "1.0.0",
+  "description": "Food Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikgun1984/Food-Project.git"
+  },
+  "author": "Nick Gundobin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikgun1984/Food-Project/issues"
+  },
+  "homepage": "https://github.com/nikgun1984/Food-Project#readme",
+  "devDependencies": {
+    "json-server": "^0.16.1"
+  }
+}

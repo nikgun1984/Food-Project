@@ -1,0 +1,47 @@
+{
+  "menu": [
+    {
+      "img": "img/tabs/fitness.jpg",
+      "altimg": "fitness",
+      "title": "Fitness Menu",
+      "descr": "The Fitness menu is a new approach to cooking: more fresh vegetables and fruits. Product of active and healthy people. This is a brand new product with the best price and high quality!",
+      "price": 9
+    },
+    {
+      "img": "img/tabs/lean.jpg",
+      "altimg": "lean",
+      "title": "Lean Menu",
+      "descr": "The Lean menu is a careful selection of ingredients: the complete absence of animal products, almond,oat, coconut or buckwheat milk, the right amount of protein due to tofu and imported vegetarian steaks.",
+      "price": 14
+    },
+    {
+      "img": "img/tabs/keto.jpg",
+      "altimg": "keto",
+      "title": "Keto Menu",
+      "descr": "Our ketogenic diet, meals and snacks are centered around the following foods: eggs, poultry, fish, meat, nuts, healthy fats, avocados, non-starchy vegetables, condiments",
+      "price": 21
+    }
+  ],
+  "requests": [
+    {
+      "name": "Nikolay Gundobin",
+      "phone": "(917) 500-0984",
+      "id": 1
+    },
+    {
+      "name": "mark Heys",
+      "phone": "9175000984",
+      "id": 2
+    },
+    {
+      "name": "Mark",
+      "phone": "743t536754673",
+      "id": 3
+    },
+    {
+      "name": "Nikolay Gundobin",
+      "phone": "(917) 500-0984",
+      "id": 4
+    }
+  ]
+}
