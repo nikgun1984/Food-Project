@@ -355,6 +355,112 @@ window.addEventListener('DOMContentLoaded', ()=>{
     // }) // will return promise this is why we can use .then chain
     //     .then(response => response.json()) // response.json() will return promise as well
     //     .then(json => console.log(json));
+
+
+    //Slider
+
+    const prevArrow = document.querySelector('.offer__slider-prev'),
+          nextArrow = document.querySelector('.offer__slider-next'),
+          images = document.querySelectorAll('.offer__slide'),
+          totalImages = document.querySelector('#total'),
+          currentImage = document.querySelector('#current'),
+          wrapper = document.querySelector('.offer__slider-wrapper'),
+          slidesField = document.querySelector('.offer__slider-inner'),
+          width = window.getComputedStyle(wrapper).width;
+    let index = 1;
+    let offset = 0; //otstup
+    //console.log(+width.slice(0,width.length-2)*(images.length));
+
+    if(images.length<10){
+        total.textContent = `0${images.length}`;
+        currentImage.textContent = `0${index}`;
+
+    } else {
+        total.textContent = images.length;
+        currentImage.textContent = index;
+    }
+
+    slidesField.style.width = 100*images.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+    wrapper.style.overflow = 'hidden';
+    images.forEach(image =>{
+        image.style.width = width;
+    });
+
+    nextArrow.addEventListener('click',()=>{
+        if(offset == +width.slice(0,width.length-2)*(images.length-1)){
+            offset = 0;
+        } else {
+            offset += +width.slice(0,width.length-2);
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(index == images.length){
+            index = 1;
+        } else {
+            index++;
+        }
+
+        if(images.length<10){
+            currentImage.textContent = `0${index}`;
+        } else {
+            currentImage.textContent = index;
+        }
+    });
+
+    prevArrow.addEventListener('click', ()=>{
+        if(offset==0){
+            offset = +width.slice(0,width.length-2)*(images.length-1);
+        } else {
+            offset -= +width.slice(0,width.length-2);
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(index == 1){
+            index = images.length;
+        } else {
+            index--;
+        }
+
+        if(images.length<10){
+            currentImage.textContent = `0${index}`;
+        } else {
+            currentImage.textContent = index;
+        }
+    });
+
+    // showImage(index);
+
+    // if(images.length<10){
+    //     total.textContent = `0${images.length}`;
+    // } else {
+    //     total.textContent = images.length;
+    // }
+
+    // function showImage(i){ 
+    //     if(i > images.length){
+    //         index = 1;
+    //     }
+    //     if(i<1){
+    //         index = images.length;
+    //     }
+    //     images.forEach(image => image.style.display = 'none');
+    //     images[index-1].style.display = 'block';
+
+    //     if(index<10){
+    //         currentImage.textContent = `0${index}`;
+    //     } else {
+    //         currentImage.textContent = index;
+    //     }
+    // }
+
+    // function plusSlides(i){
+    //     showImage(index+= i);
+    // }
+
+    // prevArrow.addEventListener('click', ()=>plusSlides(-1));
+    // nextArrow.addEventListener('click', ()=>plusSlides(1));
 });
 
 
