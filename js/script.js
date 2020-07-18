@@ -362,6 +362,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
     const prevArrow = document.querySelector('.offer__slider-prev'),
           nextArrow = document.querySelector('.offer__slider-next'),
           images = document.querySelectorAll('.offer__slide'),
+          slider = document.querySelector('.offer__slider'),
           totalImages = document.querySelector('#total'),
           currentImage = document.querySelector('#current'),
           wrapper = document.querySelector('.offer__slider-wrapper'),
@@ -372,11 +373,11 @@ window.addEventListener('DOMContentLoaded', ()=>{
     //console.log(+width.slice(0,width.length-2)*(images.length));
 
     if(images.length<10){
-        total.textContent = `0${images.length}`;
+        totalImages.textContent = `0${images.length}`;
         currentImage.textContent = `0${index}`;
 
     } else {
-        total.textContent = images.length;
+        totalImages.textContent = images.length;
         currentImage.textContent = index;
     }
 
@@ -388,34 +389,71 @@ window.addEventListener('DOMContentLoaded', ()=>{
         image.style.width = width;
     });
 
+    slider.style.position = 'relative';
+    const dots = document.createElement('ol');
+    const indicators = [];
+    dots.classList.add('carousel-dots');
+    dots.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+    `;
+
+    slider.append(dots);
+
+    for(let i=0;i<images.length;i++){
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i+1);
+        dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+        if(i==0){
+            dot.style.opacity = 1;
+        }
+        dots.append(dot);
+        indicators.push(dot);
+    }
+
     nextArrow.addEventListener('click',()=>{
-        if(offset == +width.slice(0,width.length-2)*(images.length-1)){
+        if(offset == +width.replace(/\D/g,'')*(images.length-1)){
             offset = 0;
         } else {
-            offset += +width.slice(0,width.length-2);
+            offset += +width.replace(/\D/g,'');
         }
-        slidesField.style.transform = `translateX(-${offset}px)`;
 
         if(index == images.length){
             index = 1;
         } else {
             index++;
         }
-
-        if(images.length<10){
-            currentImage.textContent = `0${index}`;
-        } else {
-            currentImage.textContent = index;
-        }
+        dotBindNumber();
     });
 
     prevArrow.addEventListener('click', ()=>{
         if(offset==0){
-            offset = +width.slice(0,width.length-2)*(images.length-1);
+            offset = +width.replace(/\D/g,'')*(images.length-1);
         } else {
-            offset -= +width.slice(0,width.length-2);
+            offset -= +width.replace(/\D/g,'');
         }
-        slidesField.style.transform = `translateX(-${offset}px)`;
 
         if(index == 1){
             index = images.length;
@@ -423,12 +461,32 @@ window.addEventListener('DOMContentLoaded', ()=>{
             index--;
         }
 
+        dotBindNumber();
+
+    });
+
+    indicators.forEach(dot => {
+        dot.addEventListener('click',(e)=>{
+            const slideTo = e.target.getAttribute('data-slide-to');
+            index = slideTo;
+            offset = width.replace(/\D/g,'')*(slideTo-1);
+
+            dotBindNumber();
+        })
+    });
+
+    function dotBindNumber(){
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
         if(images.length<10){
             currentImage.textContent = `0${index}`;
         } else {
             currentImage.textContent = index;
         }
-    });
+
+        indicators.forEach(dot => dot.style.opacity = '.5');
+        indicators[index-1].style.opacity = 1;
+    }
 
     // showImage(index);
 
